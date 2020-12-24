@@ -1,0 +1,49 @@
+---
+- name: Ensure OS is up to date
+  apt:
+    update_cache: yes
+    upgrade: safe
+
+- name: Install sudo
+  apt:
+    name: sudo
+    state: present
+
+- name: Create non-root home assistant user account
+  user:
+    name: "{{ home_assistant_user }}"
+    password: '*'
+    shell: /bin/bash
+    groups:
+      - sudo
+    append: yes
+
+- name: Ensure ssh directory exists for current user on the control machine
+  file:
+    path: "{{ lookup('env','HOME') + '/.ssh' }}"
+    mode: "0700"
+  become: no
+  delegate_to: localhost
+  run_once: true
+
+- name: Create SSH key pair on the control machine to connect using home assistant user
+  openssh_keypair:
+    path: "{{ lookup('env','HOME') + '/.ssh/id_rsa' }}"
+    comment: "homeassistant"
+  become: no
+  delegate_to: localhost
+  run_once: true
+
+- name: Add public key to home assistant user authorized keys
+  authorized_key:
+    user: "{{ home_assistant_user }}"
+    state: present
+    key: "{{ lookup('file', lookup('env', 'HOME') + '/.ssh/id_rsa.pub') }}"
+
+- name: Enable passwordless sudo
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: '^%sudo'
+    line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
