@@ -61,7 +61,7 @@ jobs:
           body: ${{ steps.tag_version.outputs.changelog }}
 
       - name: Deploy to Ansible Galaxy
-        uses: artis3n/ansible_galaxy_collection@5a43945816453c9c75a560d90002818231fa2797
+        uses: artis3n/ansible_galaxy_collection@v2
         with:
           api_key: '${{ secrets.galaxy_api_key }}'
           galaxy_version: '${{ steps.tag_version.outputs.new_tag }}'
