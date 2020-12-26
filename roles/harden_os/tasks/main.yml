@@ -1,0 +1,4 @@
+---
+- name: import ssh tasks
+  import_task: ssh.yml
+  when: harden_ssh|bool
