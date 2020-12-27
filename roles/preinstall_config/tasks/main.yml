@@ -4,9 +4,11 @@
     update_cache: yes
     upgrade: safe
 
-- name: Install sudo
+- name: Install OS packages for remote management
   apt:
-    name: sudo
+    name:
+      - sudo
+      - python3-pip
     state: present
 
 - name: Create non-root home assistant user account
