@@ -8,11 +8,15 @@
 
 - name: Ensure the apt auto-upgrades configuration stub is created
   shell: >
+    set -o pipefail
+
     echo unattended-upgrades unattended-upgrades/enable_auto_updates boolean true
      | debconf-set-selections
 
     dpkg-reconfigure -f noninteractive unattended-upgrades
   args:
+    creates: /etc/apt/apt.conf.d/20auto-upgrades
+    executable: /bin/bash
     warn: no
 
 - name: Configure unattended upgrades
