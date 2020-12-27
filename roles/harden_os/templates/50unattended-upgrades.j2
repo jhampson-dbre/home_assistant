@@ -91,7 +91,7 @@ Unattended-Upgrade::Remove-Unused-Dependencies "true";
 
 // Automatically reboot *WITHOUT CONFIRMATION* if
 //  the file /var/run/reboot-required is found after the upgrade
-Unattended-Upgrade::Automatic-Reboot "{{ patching_reboot_enabled }}";
+Unattended-Upgrade::Automatic-Reboot "{{ enable_patching_reboot }}";
 
 // Automatically reboot even if there are users currently logged in
 // when Unattended-Upgrade::Automatic-Reboot is set to true
