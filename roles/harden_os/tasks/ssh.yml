@@ -1,36 +1,40 @@
 ---
-- name: Harden SSH
-  block:
-    - name: Disable root SSH login
-      lineinfile:
-        path: /etc/ssh/sshd_config
-        regexp: '^PermitRootLogin'
-        line: 'PermitRootLogin no'
-        state: present
-        validate: /usr/sbin/sshd -T -f %s
+- name: Disable root SSH login
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PermitRootLogin'
+    line: 'PermitRootLogin no'
+    state: present
+    validate: /usr/sbin/sshd -T -f %s
+  notify:
+    - restart sshd
 
-    - name: Disable SSH password authentication
-      lineinfile:
-        path: /etc/ssh/sshd_config
-        regexp: '^PasswordAuthentication'
-        line: 'PasswordAuthentication no'
-        state: present
-        validate: /usr/sbin/sshd -T -f %s
+- name: Disable SSH password authentication
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PasswordAuthentication'
+    line: 'PasswordAuthentication no'
+    state: present
+    validate: /usr/sbin/sshd -T -f %s
+  notify:
+    - restart sshd
 
-    - name: Enable sandbox for SSH privilege seperation
-      lineinfile:
-        path: /etc/ssh/sshd_config
-        regex: '^UsePrivilegeSeparation'
-        line: 'UsePrivilegeSeparation sandbox'
-        state: present
-        validate: /usr/sbin/sshd -T -f %s
+- name: Enable sandbox for SSH privilege seperation
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regex: '^UsePrivilegeSeparation'
+    line: 'UsePrivilegeSeparation sandbox'
+    state: present
+    validate: /usr/sbin/sshd -T -f %s
+  notify:
+    - restart sshd
 
-    - name: Only allow SSH key authentication
-      lineinfile:
-        path: /etc/ssh/sshd_config
-        regex: '^AuthenticationMethods'
-        line: 'AuthenticationMethods publickey'
-        state: present
-        validate: /usr/sbin/sshd -T -f %s
+- name: Only allow SSH key authentication
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regex: '^AuthenticationMethods'
+    line: 'AuthenticationMethods publickey'
+    state: present
+    validate: /usr/sbin/sshd -T -f %s
   notify:
     - restart sshd
