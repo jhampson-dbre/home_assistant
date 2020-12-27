@@ -1,2 +1,8 @@
 ---
+# Configure which areas to harden
 harden_ssh: true
+enable_automatic_security_updates: true
+
+# Automatic Security Patching options
+enable_patching_reboot: "true"
+patching_reboot_time: "04:00"
