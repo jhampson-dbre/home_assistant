@@ -1,8 +1,8 @@
 ---
 - name: import ssh tasks
-  import_task: ssh.yml
+  import_tasks: ssh.yml
   when: harden_ssh|bool
 
 - name: import patching tasks
-  import_task: patching.yml
+  import_tasks: patching.yml
   when: enable_automatic_security_updates|bool
