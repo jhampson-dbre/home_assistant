@@ -33,8 +33,12 @@ jobs:
 
       - name: Lint with ansible-lint
         run: |
-          # Check Ansible syntax and formatting rules
-          ansible-lint -v $(find ./roles/ -maxdepth 1 -mindepth 1)
+          # Check Ansible formatting rules
+          ansible-lint ./tests/sanity.yml
+
+      - name: Check for syntax errors
+        run: |
+          ansible-playbook ./tests/sanity.yml --syntax-check
 
       - name: Validate the collection is installable
         run: |

@@ -1,0 +1,11 @@
+- name: Import all roles for sanity tests
+  hosts: all
+  tasks:
+
+    - name: import harden_os
+      import_role:
+        name: roles/harden_os
+
+    - name: import preinstall_config
+      import_role:
+        name: roles/preinstall_config
