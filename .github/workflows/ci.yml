@@ -34,7 +34,7 @@ jobs:
       - name: Lint with ansible-lint
         run: |
           # Check Ansible syntax and formatting rules
-          ansible-lint .
+          ansible-lint -v $(find ./roles/ -maxdepth 1 -mindepth 1)
 
       - name: Validate the collection is installable
         run: |
