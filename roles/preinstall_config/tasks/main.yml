@@ -56,4 +56,3 @@
     state: present
     regexp: '{{ ansible_hostname }}$'
     line: "{{ has_reserved_ip | ternary(ansible_default_ipv4['address'], '127.0.1.1') }} {{ ansible_hostname }}"
-    validate: 'visudo -cf %s'
