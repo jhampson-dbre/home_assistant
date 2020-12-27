@@ -1,0 +1,22 @@
+galaxy_info:
+  author: Jared Hampson
+  description: Improve OS security after Home Assistant Suprvised is installed
+
+  license: MIT
+
+  min_ansible_version: 2.9
+
+  platforms:
+    - name: Debian
+      versions:
+        - buster
+
+  galaxy_tags:
+    - home
+    - assistant
+    - supervised
+    - raspberry
+    - pi
+    - hassio
+
+dependencies: []
