@@ -19,11 +19,22 @@ The following software is required on the control node:
 Role Variables
 --------------
 
+The following facts are used by this role
+
+```yaml
+ansible_default_ipv4['address']: Use to configure static IP in /etc/hosts when `has_reserved_ip == true`
+```
+
 Variables in `defaults/main.yml` with default values
 
 ```yaml
 # non-root user to create on the Home Assistant server
 home_assistant_user: homeassistant
+
+# Set this to true if you have a static IP for the Raspberry Pi
+# When set to true, set the ipv4 address in /etc/hosts
+# When set to false, 127.0.1.1 will be set in /etc/hosts
+has_reserved_ip: false
 ```
 
 Dependencies
