@@ -1,0 +1,6 @@
+---
+fail2ban_jails:
+  - ssh
+  - hass-iptables
+
+max_failed_login_attempts: 5

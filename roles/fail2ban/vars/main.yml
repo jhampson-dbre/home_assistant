@@ -1,0 +1,18 @@
+---
+fail2ban_properties:
+  - section: ssh
+    options:
+      - option: port
+        value: ssh
+      - option: filter
+        value: sshd
+      - option: logpath
+        value: /var/log/auth.log
+  - section: hass-iptables
+    options:
+      - option: action
+        value: iptables-allports[name=HASS]
+      - option: filter
+        value: hass
+      - option: logpath
+        value: /usr/share/hassio/homeassistant/home-assistant.log
