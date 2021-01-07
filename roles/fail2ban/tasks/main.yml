@@ -1,0 +1,127 @@
+---
+- name: Get nginx container ip
+  docker_container_info:
+    name: addon_core_nginx_proxy
+  register: nginx_container_info
+
+# TODO: Allow for managing this more granularly, in case
+#       other properties in the http or logger sections are defined
+- name: Enable failed login logging from Home Assistant
+  blockinfile:
+    path: /usr/share/hassio/homeassistant/configuration.yaml
+    marker: "# {mark} CONTENT ADDED BY home_assistant.fail2ban ANSIBLE ROLE"
+    backup: yes
+    block: |
+      http:
+        use_x_forwarded_for: true
+        trusted_proxies:
+          - {{ nginx_container_info.container.NetworkSettings.Networks.hassio.IPAddress }}
+
+      logger:
+        default: info
+        logs:
+          homeassistant.components.http.ban: warning
+
+      sensor fail2ban:
+        - platform: fail2ban
+          jails:
+            - hass-iptables
+            - ssh
+          file_path: /config/fail2ban.log
+  register: logging_config
+  notify:
+    - restart home assistant
+
+- name: Ensure logging configuration is valid
+  block:
+    - name: Check Home Assistant configuration
+      shell: |
+        ha core check
+  rescue:
+    # NOTE: This does not work due to a bug that exists as of Ansible 2.9.16
+    #       where blockinfile does not return backup location correctly.
+    #       The backup file is created, but it would have to be restored manually.
+    #       Ref: https://github.com/ansible/ansible/issues/27626
+    - name: Restore backup configuration
+      copy:
+        src: "{{ logging_config.backup_file }}"
+        dest: /usr/share/hassio/homeassistant/configuration.yaml
+
+    - name: Unable to continue
+      fail:
+        msg: |
+          Error configuring logger in configuration.yaml.
+          If you already custom logging configuration, please remove it and retry the role.
+
+- name: Install fail2ban
+  apt:
+    name:
+      - fail2ban
+    state: present
+  notify:
+    - restart fail2ban
+
+- name: Copy default fail2ban config for modification
+  copy:
+    src: /etc/fail2ban/fail2ban.conf
+    dest: /etc/fail2ban/fail2ban.local
+    remote_src: yes
+    mode: '0644'
+  notify:
+    - restart fail2ban
+
+- name: Edit fail2ban log location so it can be read by Home Assistant
+  ini_file:
+    path: /etc/fail2ban/fail2ban.local
+    section: Definition
+    option: logtarget
+    value: /usr/share/hassio/homeassistant/fail2ban.log
+  notify:
+    - restart fail2ban
+
+- name: Create the filter for Home Assistant jail
+  copy:
+    src: hass.local
+    dest: /etc/fail2ban/filter.d/hass.local
+    mode: '0644'
+  notify:
+    - restart fail2ban
+
+- name: Copy default jail config for modification
+  copy:
+    src: /etc/fail2ban/jail.conf
+    dest: /etc/fail2ban/jail.local
+    remote_src: yes
+    mode: '0644'
+  notify:
+    - restart fail2ban
+
+- name: Configure shared jail properties
+  ini_file:
+    path: /etc/fail2ban/jail.local
+    section: "{{ jail_common_config.0 }}"
+    option: "{{ jail_common_config.1.jail_option }}"
+    value: "{{ jail_common_config.1.jail_value }}"
+  loop: "{{ fail2ban_jails|product(jail_properties)|list }}"
+  loop_control:
+    loop_var: jail_common_config
+  vars:
+    jail_properties:
+      - jail_option: enabled
+        jail_value: "true"
+      - jail_option: maxretry
+        jail_value: "{{ max_failed_login_attempts }}"
+  notify:
+    - restart fail2ban
+
+- name: Configure unique jail properties
+  ini_file:
+    path: /etc/fail2ban/jail.local
+    section: "{{ jail_unique_config.0.section }}"
+    option: "{{ jail_unique_config.1.option }}"
+    value: "{{ jail_unique_config.1.value }}"
+  loop: "{{ fail2ban_properties|subelements('options') }}"
+  loop_control:
+    loop_var: jail_unique_config
+  notify:
+    - restart fail2ban

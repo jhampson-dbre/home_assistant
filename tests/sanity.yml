@@ -9,3 +9,7 @@
     - name: import preinstall_config
       import_role:
         name: roles/preinstall_config
+
+    - name: import fail2ban
+      import_role:
+        name: roles/fail2ban
