@@ -17,6 +17,11 @@ Unattended-Upgrade::Allowed-Origins {
 //      "${distro_id}:${distro_codename}-backports";
 };
 
+Unattended-Upgrade::Origins-Pattern {
+        "origin=${distro_id},codename=${distro_codename},label=${distro_id}";
+        "origin=${distro_id},codename=${distro_codename},label=${distro_id}-Security";
+};
+
 // Python regular expressions, matching packages to exclude from upgrading
 Unattended-Upgrade::Package-Blacklist {
     // The following matches all packages starting with linux-
