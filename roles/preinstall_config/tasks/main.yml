@@ -28,6 +28,29 @@
   delegate_to: localhost
   run_once: true
 
+- name: Check if SSH keypair already exists
+  stat:
+    path: "{{ lookup('env','HOME') + '/.ssh/id_rsa' }}"
+  register: existing_ssh_key
+  become: no
+  delegate_to: localhost
+  run_once: true
+
+- name: Backup existing SSH keypair
+  copy:
+    src: "{{ key_file }}"
+    dest: "{{ key_file + '.bak' }}"
+    backup: yes
+  loop:
+    - "{{ lookup('env','HOME') + '/.ssh/id_rsa' }}"
+    - "{{ lookup('env','HOME') + '/.ssh/id_rsa.pub' }}"
+  loop_control:
+    loop_var: key_file
+  when: existing_ssh_key.stat.exists
+  become: no
+  delegate_to: localhost
+  run_once: true
+
 - name: Create SSH key pair on the control machine to connect using home assistant user
   openssh_keypair:
     path: "{{ lookup('env','HOME') + '/.ssh/id_rsa' }}"
