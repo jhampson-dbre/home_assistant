@@ -2,7 +2,16 @@
 - name: Ensure OS is up to date
   apt:
     update_cache: yes
-    upgrade: safe
+    upgrade: full
+
+- name: Check if reboot required
+  stat:
+    path: /var/run/reboot-required
+  register: pending_reboot
+
+- name: Reboot if required to apply any updates
+  reboot:
+  when: pending_reboot.stat.exists
 
 - name: Install OS packages for remote management
   apt:
