@@ -3,6 +3,7 @@
   apt:
     update_cache: yes
     upgrade: full
+  register: apt_out
 
 - name: Check if reboot required
   stat:
@@ -11,7 +12,7 @@
 
 - name: Reboot if required to apply any updates
   reboot:
-  when: pending_reboot.stat.exists
+  when: "'linux-image' in apt_out.stdout or pending_reboot.stat.exists"
 
 - name: Install OS packages for remote management
   apt:
