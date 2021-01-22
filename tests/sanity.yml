@@ -4,12 +4,16 @@
 
     - name: import harden_os
       import_role:
-        name: roles/harden_os
+        name: ../roles/harden_os
 
     - name: import preinstall_config
       import_role:
-        name: roles/preinstall_config
+        name: ../roles/preinstall_config
 
     - name: import fail2ban
       import_role:
-        name: roles/fail2ban
+        name: ../roles/fail2ban
+
+    - name: import install_hacs
+      import_role:
+        name: ../roles/install_hacs
