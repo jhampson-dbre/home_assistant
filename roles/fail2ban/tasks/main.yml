@@ -46,6 +46,7 @@
       copy:
         src: "{{ logging_config.backup_file }}"
         dest: /usr/share/hassio/homeassistant/configuration.yaml
+        mode: '0644'
 
     - name: Unable to continue
       fail:
@@ -76,6 +77,7 @@
     section: Definition
     option: logtarget
     value: /usr/share/hassio/homeassistant/fail2ban.log
+    mode: '0644'
   notify:
     - restart fail2ban
 
@@ -102,6 +104,7 @@
     section: "{{ jail_common_config.0 }}"
     option: "{{ jail_common_config.1.jail_option }}"
     value: "{{ jail_common_config.1.jail_value }}"
+    mode: '0644'
   loop: "{{ fail2ban_jails|product(jail_properties)|list }}"
   loop_control:
     loop_var: jail_common_config
@@ -120,6 +123,7 @@
     section: "{{ jail_unique_config.0.section }}"
     option: "{{ jail_unique_config.1.option }}"
     value: "{{ jail_unique_config.1.value }}"
+    mode: '0644'
   loop: "{{ fail2ban_properties|subelements('options') }}"
   loop_control:
     loop_var: jail_unique_config
