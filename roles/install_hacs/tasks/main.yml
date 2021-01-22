@@ -1,0 +1,33 @@
+---
+- name: Install install_hacs role requirements
+  import_tasks: requirements.yml
+  when: install_hacs_requirements|bool
+
+- name: Create custom_components directory
+  file:
+    path: "{{ ha_path }}/custom_components"
+    state: directory
+    mode: '0755'
+
+- name: Clean up existing HACS directory
+  file:
+    path: "{{ ha_path }}/custom_components/hacs"
+    state: absent
+
+- name: Create HACS directory
+  file:
+    path: "{{ ha_path }}/custom_components/hacs"
+    state: directory
+    mode: '0755'
+
+- name: Download and unpack HACS
+  unarchive:
+    src: https://github.com/hacs/integration/releases/latest/download/hacs.zip
+    dest: "{{ ha_path }}/custom_components/hacs"
+    remote_src: yes
+
+- name: Restart Home Assistant
+  shell: |
+    ha core restart
+  args:
+    warn: no # noqa 301

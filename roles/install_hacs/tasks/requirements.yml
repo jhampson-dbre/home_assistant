@@ -1,0 +1,7 @@
+---
+- name: Install OS package prereqs # noqa 403
+  apt:
+    name:
+      - unzip
+    state: present
+    update_cache: yes
