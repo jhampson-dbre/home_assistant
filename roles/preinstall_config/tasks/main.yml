@@ -51,6 +51,7 @@
     src: "{{ key_file }}"
     dest: "{{ key_file + '.bak' }}"
     backup: yes
+    mode: '0600'
   loop:
     - "{{ lookup('env','HOME') + '/.ssh/id_rsa' }}"
     - "{{ lookup('env','HOME') + '/.ssh/id_rsa.pub' }}"
