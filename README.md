@@ -2,6 +2,8 @@
 
 A collection of roles for installing and configuring Home Assistant Supervised on Debian 10
 
+**WARNING:** The roles in this collection can make changes to Home Assisant's configuration.yaml and restart Home Assistant. As recommended before making any changes to Home Assisant, ensure you have a good snapshot of your current configuration.
+
 ## Roles
 
 ### Minimal installation
@@ -17,3 +19,4 @@ These roles provide additional functionality to secure and enhance the minimal i
 
 1. [harden_os](https://github.com/jhampson-dbre/home_assistant/blob/main/roles/harden_os/README.md) - Enable automated Debian security updates and restrict SSH access
 1. [fail2ban](https://github.com/jhampson-dbre/home_assistant/blob/main/roles/fail2ban/README.md) - Install fail2ban, configure it to blacklist IPs with excessive failed login attempts to Home Assistant, and add the fail2ban integration to Home Assistant
+1. [install_hacs](https://github.com/jhampson-dbre/home_assistant/blob/main/roles/install_hacs/README.md) - Install the [Home Assistant Comunity Store](https://hacs.xyz/), a marketplace of community-contributed custom components for Home Assistant
