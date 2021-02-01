@@ -36,7 +36,7 @@ jobs:
       - name: Lint with ansible-lint
         run: |
           # Check Ansible formatting rules
-          ansible-lint ./tests/sanity.yml
+          ansible-lint ./tests/sanity.yml --exclude ~/.ansible/roles
 
       - name: Check for syntax errors
         run: |
