@@ -1,0 +1,7 @@
+---
+- name: Install pip requirements for supervised_install
+  pip:
+    name:
+      - docker
+    executable: pip3
+    extra_args: --user

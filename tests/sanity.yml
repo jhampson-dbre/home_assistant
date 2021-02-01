@@ -17,3 +17,7 @@
     - name: import install_hacs
       import_role:
         name: ../roles/install_hacs
+
+    - name: import supervised_install
+      import_role:
+        name: ../roles/supervised_install

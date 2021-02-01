@@ -13,6 +13,8 @@ While every effort has been made to ensure these roles complies with ADR-0014, n
 
 1. [preinstall_config](https://github.com/jhampson-dbre/home_assistant/blob/main/roles/preinstall_config/README.md) - Prerequisite configuration for Home Assistant Supervised installation
 
+1. [supervised_install](https://github.com/jhampson-dbre/home_assistant/blob/main/roles/supervised_install/README.md) - Supported installation of Home Assistant Supervised on Debian 10
+
 ### Additional roles
 
 These roles provide additional functionality to secure and enhance the minimal install of Home Assistant Supervised. These are roles I use myself and do not comply with ADR-0014.
@@ -20,3 +22,49 @@ These roles provide additional functionality to secure and enhance the minimal i
 1. [harden_os](https://github.com/jhampson-dbre/home_assistant/blob/main/roles/harden_os/README.md) - Enable automated Debian security updates and restrict SSH access
 1. [fail2ban](https://github.com/jhampson-dbre/home_assistant/blob/main/roles/fail2ban/README.md) - Install fail2ban, configure it to blacklist IPs with excessive failed login attempts to Home Assistant, and add the fail2ban integration to Home Assistant
 1. [install_hacs](https://github.com/jhampson-dbre/home_assistant/blob/main/roles/install_hacs/README.md) - Install the [Home Assistant Comunity Store](https://hacs.xyz/), a marketplace of community-contributed custom components for Home Assistant
+
+### Example Playbook
+
+```yaml
+---
+# Minimal Install
+#
+# Initial setup connects as root over SSH to create
+# a new, non-root account to use going forward.
+# After the first run, `ansible_user: root` can be removed
+# and the non-root account can be used (e.g. as host_var)
+- name: Initial OS setup
+  hosts: all
+  vars:
+    ansible_user: root
+  become: yes
+  tasks:
+    - name: Import preinstall_config role
+      import_role:
+        name: jhampson_dbre.home_assistant.preinstall_config
+      vars:
+        has_reserved_ip: true
+
+# Since preinstall_config creates a non-root account with sudo access,
+# we can use `become: yes` for privilege escalation
+# instead of logging in directly as root.
+#
+# Use `force_handlers: true` to ensure to ensure any changed services
+# are restarted even if an error is encountered before the play ends
+- name: Install Home Assistant Supervised and Requirements
+  hosts: all
+  become: yes
+  force_handlers: true
+  roles:
+    - name: jhampson_dbre.home_assistant_supervised
+
+# Extras
+- name: Security Hardening and enhancements
+  hosts: all
+  become: yes
+  force_handlers: true
+  roles:
+    - name: jhampson_dbre.home_assistant.harden_os
+    - name: jhampson_dbre.home_assistant.fail2ban
+    - name: jhampson_dbre.home_assistant.install_hacs
+```

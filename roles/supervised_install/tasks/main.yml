@@ -1,0 +1,178 @@
+---
+- name: Ensure we are running on OS with apt package manager
+  assert:
+    that:
+      - ansible_pkg_mgr == "apt"
+    fail_msg: "Expected 'apt' package manager, but got {{ ansible_pkg_mgr }}. Only Debian-based distros are supported"
+
+- name: Install role requirements
+  import_tasks: requirements.yml
+  when: supervised_install_ansible_requirements|bool
+
+- name: Install OS package prereqs # noqa 403
+  apt:
+    name:
+      - systemd
+      - network-manager
+      - apparmor
+      - jq
+      - curl
+      - dbus
+    state: latest
+    update_cache: yes
+
+- name: Disable Modem Manager to prevent issues when using serial devices
+  service:
+    name: ModemManager
+    enabled: no
+    state: stopped
+
+- name: Create Docker config directory
+  file:
+    path: /etc/docker
+    state: directory
+    mode: '0755'
+
+- name: Set up docker config file
+  copy:
+    src: docker_daemon.json
+    dest: /etc/docker/daemon.json
+    mode: '0644'
+  notify:
+    - restart docker
+
+- name: Fix kernel dmesg restriction
+  sysctl:
+    name: kernel.dmesg_restrict
+    value: '0'
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: Create config for NetworkManager
+  copy:
+    src: "{{ networkmanager_file['source'] }}"
+    dest: "{{ networkmanager_file['target'] }}"
+    mode: '0644'
+  loop:
+    - source: NetworkManager.conf
+      target: /etc/NetworkManager/NetworkManager.conf
+    - source: system-connection-default
+      target: /etc/NetworkManager/system-connections/default
+  loop_control:
+    loop_var: networkmanager_file
+    label: "{{ networkmanager_file['source'] }}"
+  notify:
+    - restart networkmanager
+
+- name: Overwrite network interfaces file
+  copy:
+    src: interfaces
+    dest: /etc/network/interfaces
+    mode: '0644'
+  notify:
+    - restart networkmanager
+
+- name: Ensure all changed service are restarted
+  meta: flush_handlers
+
+- name: Init folders
+  file:
+    path: "{{ data_share }}"
+    state: directory
+    mode: '0755'
+
+- name: Write config
+  template:
+    src: hassio.j2
+    dest: "{{ config }}"
+    mode: '0644'
+
+- name: Read version infos from web
+  uri:
+    body_format: json
+    url: https://version.home-assistant.io/stable.json
+  register: hassio_stable_out
+
+- name: Set hassio_version fact
+  set_fact:
+    hassio_version: "{{ hassio_stable_out['json']['supervisor'] }}"
+
+- name: Install supervisor Docker container
+  docker_image:
+    name: "{{ arch[ansible_architecture]['hassio_docker'] }}:{{ hassio_version }}"
+    source: pull
+    state: present
+
+- name: Add tag latest to supervisor image
+  docker_image:
+    name: "{{ arch[ansible_architecture]['hassio_docker'] }}:{{ hassio_version }}"
+    repository: "{{ arch[ansible_architecture]['hassio_docker'] }}:latest"
+    # As 'latest' usually already is present, we need to enable overwriting of existing tags
+    force_tag: yes
+    source: local
+
+- name: Install supervisor startup script
+  template:
+    src: hassio-supervisor.j2
+    dest: "{{ prefix }}/sbin/hassio-supervisor"
+    mode: a+x
+
+- name: Install supervisor service file
+  template:
+    src: hassio-supervisor.service.j2
+    dest: "{{ sysconfdir }}/systemd/system/hassio-supervisor.service"
+    mode: '0644'
+
+- name: Enable supervisor service
+  service:
+    name: hassio-supervisor
+    enabled: yes
+
+- name: Create AppArmor directory
+  file:
+    path: "{{ data_share }}/apparmor"
+    state: directory
+    mode: '0755'
+
+- name: Install AppArmor startup script
+  template:
+    src: hassio-apparmor.j2
+    dest: "{{ prefix }}/sbin/hassio-apparmor"
+    mode: a+x
+
+- name: Install AppArmor service file
+  template:
+    src: hassio-apparmor.service.j2
+    dest: "{{ sysconfdir }}/systemd/system/hassio-apparmor.service"
+    mode: '0644'
+
+- name: Download AppArmor profile
+  get_url:
+    url: https://version.home-assistant.io/apparmor.txt
+    dest: "{{ data_share }}/apparmor/hassio-supervisor"
+    mode: '0644'
+
+- name: Enable and start AppArmor service
+  service:
+    name: hassio-apparmor
+    enabled: yes
+    state: started
+
+# AppArmor service must be started before Home Assistant service
+- name: Start Home Assistant Supervised
+  service:
+    name: hassio-supervisor
+    state: started
+
+- name: Install the 'ha' cli
+  copy:
+    src: ha
+    dest: "{{ prefix }}/bin/ha"
+    mode: a+x
+
+- name: Home Assistant supervised is now installed
+  debug:
+    msg:
+      - "First setup will take some time, when it's ready you can reach it here:"
+      - "http://{{ ansible_default_ipv4['address'] }}:8123"

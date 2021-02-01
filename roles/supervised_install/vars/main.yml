@@ -1,0 +1,19 @@
+---
+arch:
+  "i386":
+    hassio_docker: "{{ docker_repo }}/i386-hassio-supervisor"
+  "i686":
+    hassio_docker: "{{ docker_repo }}/i386-hassio-supervisor"
+  "x86_64":
+    hassio_docker: "{{ docker_repo }}/amd64-hassio-supervisor"
+  "arm":
+    hassio_docker: "{{ docker_repo }}/armhf-hassio-supervisor"
+  "armv6l":
+    hassio_docker: "{{ docker_repo }}/armhf-hassio-supervisor"
+  "armv7l":
+    hassio_docker: "{{ docker_repo }}/armv7-hassio-supervisor"
+  "aarch64":
+    hassio_docker: "{{ docker_repo }}/aarch64-hassio-supervisor"
+
+# for geerlingguy.docker
+docker_apt_arch: arm64

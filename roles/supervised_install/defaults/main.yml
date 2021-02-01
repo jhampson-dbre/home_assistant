@@ -1,0 +1,10 @@
+---
+supervised_install_ansible_requirements: true
+prefix: /usr
+sysconfdir: /etc
+data_share: "{{ prefix }}/share/hassio"
+config: "{{ sysconfdir }}/hassio.json"
+machine: raspberrypi4-64
+docker_repo: homeassistant
+binary_docker: /usr/bin/docker
+service_docker: "docker.service"
