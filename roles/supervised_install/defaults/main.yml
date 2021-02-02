@@ -4,12 +4,12 @@ prefix: /usr
 sysconfdir: /etc
 data_share: "{{ prefix }}/share/hassio"
 config: "{{ sysconfdir }}/hassio.json"
+HASSIO_CONFIG: "/etc/hassio.json"
 machine: raspberrypi4-64
 docker_repo: homeassistant
 binary_docker: /usr/bin/docker
+BINARY_DOCKER: "/usr/bin/docker"
 service_docker: "docker.service"
-HASSIO_CONFIG: "{{ config }}"
-HASSIO_APPARMOR_BINARY: "{{ prefix }}/sbin/hassio-apparmor"
-SERVICE_DOCKER: "{{ service_docker }}"
-BINARY_DOCKER: "{{ binary_docker }}"
-BINARY_HASSIO: "{{ prefix }}/sbin/hassio-supervisor"
+SERVICE_DOCKER: "docker.service"
+HASSIO_APPARMOR_BINARY: "/usr/sbin/hassio-apparmor"
+BINARY_HASSIO: "/usr/sbin/hassio-supervisor"
