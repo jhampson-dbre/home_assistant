@@ -27,6 +27,33 @@
     enabled: no
     state: stopped
 
+- name: Make temp directory for downloading Network Manager and Docker config files
+  tempfile:
+    state: directory
+    suffix: supervised_config
+  run_once: true
+  delegate_to: localhost
+  register: temp_config_dir
+  become: no
+  notify:
+    - cleanup temp dir
+
+- name: Download NetworkManager and Docker config files
+  get_url:
+    url: https://raw.githubusercontent.com/home-assistant/supervised-installer/master/files/{{ config_file_name }}
+    dest: "{{ temp_config_dir.path }}/{{ config_file_name }}"
+    mode: "0440"
+  loop:
+    - NetworkManager.conf
+    - docker_daemon.json
+    - interfaces
+    - system-connection-default
+  loop_control:
+    loop_var: config_file_name
+  run_once: true
+  delegate_to: localhost
+  become: no
+
 - name: Create Docker config directory
   file:
     path: /etc/docker
@@ -35,7 +62,7 @@
 
 - name: Set up docker config file
   copy:
-    src: docker_daemon.json
+    src: "{{ temp_config_dir.path }}/docker_daemon.json"
     dest: /etc/docker/daemon.json
     mode: '0644'
   notify:
@@ -55,9 +82,9 @@
     dest: "{{ networkmanager_file['target'] }}"
     mode: '0644'
   loop:
-    - source: NetworkManager.conf
+    - source: "{{ temp_config_dir.path }}/NetworkManager.conf"
       target: /etc/NetworkManager/NetworkManager.conf
-    - source: system-connection-default
+    - source: "{{ temp_config_dir.path }}/system-connection-default"
       target: /etc/NetworkManager/system-connections/default
   loop_control:
     loop_var: networkmanager_file
@@ -67,7 +94,7 @@
 
 - name: Overwrite network interfaces file
   copy:
-    src: interfaces
+    src: "{{ temp_config_dir.path }}/interfaces"
     dest: /etc/network/interfaces
     mode: '0644'
   notify:
@@ -112,15 +139,45 @@
     force_tag: yes
     source: local
 
+- name: Make temp directory for downloading Home Assistant config files
+  tempfile:
+    state: directory
+    suffix: supervised_config
+  run_once: true
+  delegate_to: localhost
+  register: temp_config_dir
+  become: no
+  notify:
+    - cleanup temp dir
+
+- name: Download Home Assistant config files
+  get_url:
+    url: https://raw.githubusercontent.com/home-assistant/supervised-installer/master/files/{{ config_file_name }}
+    dest: "{{ temp_config_dir.path }}/{{ config_file_name }}"
+    mode: "0440"
+  become: no
+  loop:
+    - ha
+    - hassio-apparmor
+    - hassio-apparmor.service
+    - hassio-supervisor
+    - hassio-supervisor.service
+  loop_control:
+    loop_var: config_file_name
+  run_once: true
+  delegate_to: localhost
+
 - name: Install supervisor startup script
   template:
-    src: hassio-supervisor.j2
+    src: "{{ temp_config_dir.path }}/hassio-supervisor"
     dest: "{{ prefix }}/sbin/hassio-supervisor"
     mode: a+x
+    variable_start_string: "%%"
+    variable_end_string: "%%"
 
 - name: Install supervisor service file
   template:
-    src: hassio-supervisor.service.j2
+    src: "{{ temp_config_dir.path }}/hassio-supervisor.service"
     dest: "{{ sysconfdir }}/systemd/system/hassio-supervisor.service"
     mode: '0644'
 
@@ -137,13 +194,13 @@
 
 - name: Install AppArmor startup script
   template:
-    src: hassio-apparmor.j2
+    src: "{{ temp_config_dir.path }}/hassio-apparmor"
     dest: "{{ prefix }}/sbin/hassio-apparmor"
     mode: a+x
 
 - name: Install AppArmor service file
   template:
-    src: hassio-apparmor.service.j2
+    src: "{{ temp_config_dir.path }}/hassio-apparmor.service"
     dest: "{{ sysconfdir }}/systemd/system/hassio-apparmor.service"
     mode: '0644'
 
@@ -167,7 +224,7 @@
 
 - name: Install the 'ha' cli
   copy:
-    src: ha
+    src: "{{ temp_config_dir.path }}/ha"
     dest: "{{ prefix }}/bin/ha"
     mode: a+x
 

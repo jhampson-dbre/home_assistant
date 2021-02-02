@@ -1,4 +1,0 @@
-{
-    "log-driver": "journald",
-    "storage-driver": "overlay2"
-}

@@ -1,4 +1,11 @@
 ---
+- name: cleanup temp dir
+  file:
+    path: "{{ temp_config_dir.path }}"
+    state: absent
+  run_once: true
+  delegate_to: localhost
+
 - name: restart docker
   service:
     name: docker
