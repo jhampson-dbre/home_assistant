@@ -5,6 +5,7 @@
     state: absent
   run_once: true
   delegate_to: localhost
+  become: no
 
 - name: restart docker
   service:
