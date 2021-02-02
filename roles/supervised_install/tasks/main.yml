@@ -180,6 +180,8 @@
     src: "{{ temp_config_dir.path }}/hassio-supervisor.service"
     dest: "{{ sysconfdir }}/systemd/system/hassio-supervisor.service"
     mode: '0644'
+    variable_start_string: "%%"
+    variable_end_string: "%%"
 
 - name: Enable supervisor service
   service:
@@ -197,12 +199,16 @@
     src: "{{ temp_config_dir.path }}/hassio-apparmor"
     dest: "{{ prefix }}/sbin/hassio-apparmor"
     mode: a+x
+    variable_start_string: "%%"
+    variable_end_string: "%%"
 
 - name: Install AppArmor service file
   template:
     src: "{{ temp_config_dir.path }}/hassio-apparmor.service"
     dest: "{{ sysconfdir }}/systemd/system/hassio-apparmor.service"
     mode: '0644'
+    variable_start_string: "%%"
+    variable_end_string: "%%"
 
 - name: Download AppArmor profile
   get_url:
