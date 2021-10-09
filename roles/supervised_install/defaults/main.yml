@@ -4,12 +4,12 @@ prefix: /usr
 sysconfdir: /etc
 data_share: "{{ prefix }}/share/hassio"
 config: "{{ sysconfdir }}/hassio.json"
-HASSIO_CONFIG: "/etc/hassio.json"
+HASSIO_CONFIG: "/etc/hassio.json" # noqa var-naming
 machine: raspberrypi4-64
 docker_repo: homeassistant
 binary_docker: /usr/bin/docker
-BINARY_DOCKER: "/usr/bin/docker"
+BINARY_DOCKER: "/usr/bin/docker" # noqa var-naming
 service_docker: "docker.service"
-SERVICE_DOCKER: "docker.service"
-HASSIO_APPARMOR_BINARY: "/usr/sbin/hassio-apparmor"
-BINARY_HASSIO: "/usr/sbin/hassio-supervisor"
+SERVICE_DOCKER: "docker.service" # noqa var-naming
+HASSIO_APPARMOR_BINARY: "/usr/sbin/hassio-apparmor" # noqa var-naming
+BINARY_HASSIO: "/usr/sbin/hassio-supervisor" # noqa var-naming

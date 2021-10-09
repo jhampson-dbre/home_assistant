@@ -58,20 +58,20 @@
   file:
     path: /etc/docker
     state: directory
-    mode: '0755'
+    mode: "0755"
 
 - name: Set up docker config file
   copy:
     src: "{{ temp_config_dir.path }}/docker_daemon.json"
     dest: /etc/docker/daemon.json
-    mode: '0644'
+    mode: "0644"
   notify:
     - restart docker
 
 - name: Fix kernel dmesg restriction
   sysctl:
     name: kernel.dmesg_restrict
-    value: '0'
+    value: "0"
     sysctl_set: yes
     state: present
     reload: yes
@@ -80,7 +80,7 @@
   copy:
     src: "{{ networkmanager_file['source'] }}"
     dest: "{{ networkmanager_file['target'] }}"
-    mode: '0644'
+    mode: "0644"
   loop:
     - source: "{{ temp_config_dir.path }}/NetworkManager.conf"
       target: /etc/NetworkManager/NetworkManager.conf
@@ -96,24 +96,41 @@
   copy:
     src: "{{ temp_config_dir.path }}/interfaces"
     dest: /etc/network/interfaces
-    mode: '0644'
+    mode: "0644"
   notify:
     - restart networkmanager
 
 - name: Ensure all changed service are restarted
   meta: flush_handlers
 
+- name: Get download url for latest os-agent .deb release
+  shell: |
+    curl -s https://api.github.com/repos/home-assistant/os-agent/releases/latest \
+    | grep "browser_download_url.*{{ arch[ansible_architecture]['os_agent'] }}.deb" \
+    | cut -d : -f 2,3 \
+    | tr -d \"
+  register: os_agent_latest_url
+  failed_when: os_agent_latest_url.stdout is not search('os-agent_.*_linux_.*.deb')
+  changed_when: false
+  check_mode: no
+  args:
+    warn: false
+
+- name: Install os-agent
+  apt:
+    deb: "{{ os_agent_latest_url.stdout|trim }}"
+
 - name: Init folders
   file:
     path: "{{ data_share }}"
     state: directory
-    mode: '0755'
+    mode: "0755"
 
 - name: Write config
   template:
     src: hassio.j2
     dest: "{{ config }}"
-    mode: '0644'
+    mode: "0644"
 
 - name: Read version infos from web
   uri:
@@ -179,7 +196,7 @@
   template:
     src: "{{ temp_config_dir.path }}/hassio-supervisor.service"
     dest: "{{ sysconfdir }}/systemd/system/hassio-supervisor.service"
-    mode: '0644'
+    mode: "0644"
     variable_start_string: "%%"
     variable_end_string: "%%"
 
@@ -192,7 +209,7 @@
   file:
     path: "{{ data_share }}/apparmor"
     state: directory
-    mode: '0755'
+    mode: "0755"
 
 - name: Install AppArmor startup script
   template:
@@ -206,7 +223,7 @@
   template:
     src: "{{ temp_config_dir.path }}/hassio-apparmor.service"
     dest: "{{ sysconfdir }}/systemd/system/hassio-apparmor.service"
-    mode: '0644'
+    mode: "0644"
     variable_start_string: "%%"
     variable_end_string: "%%"
 
@@ -214,7 +231,7 @@
   get_url:
     url: https://version.home-assistant.io/apparmor.txt
     dest: "{{ data_share }}/apparmor/hassio-supervisor"
-    mode: '0644'
+    mode: "0644"
 
 - name: Enable and start AppArmor service
   service:
