@@ -1,0 +1,27 @@
+---
+# tasks file for os_agent_auto_update
+- name: create directory for auto update playbook
+  file:
+    path: "{{ os_agent_auto_update_playbook_dir }}"
+    state: directory
+    mode: 0700
+
+- name: copy OS Agent update playbook
+  copy:
+    src: update_os_agent.yml
+    dest: "{{ os_agent_auto_update_playbook_dir }}/update_os_agent.yml"
+    mode: 0700
+
+- name: ensure ansible is installed
+  pip:
+    name: ansible<=2.10
+    extra_args: --user
+    executable: pip3
+  when: os_agent_auto_update_install_ansible|bool
+
+- name: schedule periodic update of OS Agent
+  cron:
+    name: "update OS Agent"
+    minute: "0"
+    hour: "5"
+    job: "ansible-playbook {{ os_agent_auto_update_playbook_dir }}/update_os_agent.yml"

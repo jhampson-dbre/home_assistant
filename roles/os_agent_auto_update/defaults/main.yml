@@ -1,0 +1,4 @@
+---
+# defaults file for os_agent_auto_update
+os_agent_auto_update_playbook_dir: /home/homeassistant/playbooks
+os_agent_auto_update_install_ansible: true

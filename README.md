@@ -22,6 +22,7 @@ These roles provide additional functionality to secure and enhance the minimal i
 1. [harden_os](https://github.com/jhampson-dbre/home_assistant/blob/main/roles/harden_os/README.md) - Enable automated Debian security updates and restrict SSH access
 1. [fail2ban](https://github.com/jhampson-dbre/home_assistant/blob/main/roles/fail2ban/README.md) - Install fail2ban, configure it to blacklist IPs with excessive failed login attempts to Home Assistant, and add the fail2ban integration to Home Assistant
 1. [install_hacs](https://github.com/jhampson-dbre/home_assistant/blob/main/roles/install_hacs/README.md) - Install the [Home Assistant Comunity Store](https://hacs.xyz/), a marketplace of community-contributed custom components for Home Assistant
+1. [os_agent_auto_update](https://github.com/jhampson-dbre/home_assistant/blob/main/roles/os_agent_auto_update/README.md) - Configures automatic updates to OS Agent component using `ansible-playbook` scheduled with cron
 
 ### Example Playbook
 
@@ -67,4 +68,5 @@ These roles provide additional functionality to secure and enhance the minimal i
     - name: jhampson_dbre.home_assistant.harden_os
     - name: jhampson_dbre.home_assistant.fail2ban
     - name: jhampson_dbre.home_assistant.install_hacs
+    - name: jhampson_dbre.home_assistant.os_agent_auto_update
 ```

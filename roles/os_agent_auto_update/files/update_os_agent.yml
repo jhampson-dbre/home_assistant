@@ -1,0 +1,30 @@
+- hosts: localhost
+  connection: local
+  vars:
+    update_os_agent_arch:
+      "i386": "i386"
+      "i686": "none"
+      "x86_64": "x86_64"
+      "arm": "armv5"
+      "armv6l": "none"
+      "armv7l": "armv7"
+      "aarch64": "aarch64"
+
+  tasks:
+    - name: Get download url for latest os-agent .deb release
+      shell: |
+        curl -s https://api.github.com/repos/home-assistant/os-agent/releases/latest \
+        | grep "browser_download_url.*{{ update_os_agent_arch[ansible_architecture] }}.deb" \
+        | cut -d : -f 2,3 \
+        | tr -d \"
+      register: os_agent_latest_url
+      failed_when: os_agent_latest_url.stdout is not search('os-agent_.*_linux_.*.deb')
+      changed_when: false
+      check_mode: no
+      args:
+        warn: false
+
+    - name: Install os-agent
+      apt:
+        deb: "{{ os_agent_latest_url.stdout|trim }}"
+      become: true
