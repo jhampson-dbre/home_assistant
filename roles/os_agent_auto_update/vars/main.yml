@@ -1,0 +1,17 @@
+---
+# vars file for os_agent_auto_update
+os_agent_auto_update_arch:
+  "i386":
+    os_agent: "i386"
+  "i686":
+    os_agent: "none"
+  "x86_64":
+    os_agent: "x86_64"
+  "arm":
+    os_agent: "armv5"
+  "armv6l":
+    os_agent: "none"
+  "armv7l":
+    os_agent: "armv7"
+  "aarch64":
+    os_agent: "aarch64"
