@@ -5,3 +5,12 @@
       - docker
     executable: pip3
     extra_args: --user
+
+- name: Install OS package requirements for supervised_install # noqa 403
+  apt:
+    name:
+      - debconf
+      - debconf-utils
+    state: latest
+    update_cache: yes
+  become: true
