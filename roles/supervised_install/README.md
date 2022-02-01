@@ -6,7 +6,15 @@ Install Home Assistant Supervised on Raspberry Pi 4 running Debian 10 (buster).
 Requirements
 ------------
 
-python3-apt
+Python Packages:
+
+- docker
+
+OS Packages:
+
+- python3-apt
+- debconf
+- debconf-utils
 
 Role Variables
 --------------
@@ -27,25 +35,18 @@ The variables below are specify to the supervised_install role
 # Home Assistant. To maintain "full support", these requirements
 # can be manually uninstalled if you are done using this role
 supervised_install_ansible_requirements: true
-```
 
-The variables below correspond to the variables from install.sh with the same values
+# Number of seconds the homeassistant-supervised deb package installation
+# can run before considered to be failed due to timeout
+supervised_install_deb_timeout: 600
 
-```yaml
-prefix: /usr
-sysconfdir: /etc
-data_share: "{{ prefix }}/share/hassio"
-config: "{{ sysconfdir }}/hassio.json"
-docker_repo: homeassistant
-binary_docker: /usr/bin/docker
-service_docker: "docker.service"
-```
-
-The variables below can be provided by the user in install.sh
-
-```yaml
-# Allowed values in install.sh are
-# intel-nuc|odroid-c2|odroid-n2|odroid-xu|qemuarm|qemuarm-64|qemux86|qemux86-64|raspberrypi|raspberrypi2|raspberrypi3|raspberrypi4|raspberrypi3-64|raspberrypi4-64|tinker
+# The homeassistant-supervised installer may prompt for the machine type.
+# The default response for silent install can be configured.
+#
+# Allowed values in homeassistant-supervised.deb are:
+# generic-x86-64, odroid-c2, odroid-n2, odroid-xu, qemuarm, qemuarm-64,
+# qemux86, qemux86-64, raspberrypi, raspberrypi2, raspberrypi3, raspberrypi4,
+# raspberrypi3-64, raspberrypi4-64, tinker, khadas-vim3r
 machine: raspberrypi4-64
 ```
 
