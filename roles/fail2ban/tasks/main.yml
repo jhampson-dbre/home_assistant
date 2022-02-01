@@ -4,6 +4,12 @@
     name: addon_core_nginx_proxy
   register: nginx_container_info
 
+- name: Ensure fail2ban.log exists
+  file:
+    path: /usr/share/hassio/homeassistant/fail2ban.log
+    state: touch
+    mode: 0644
+
 # TODO: Allow for managing this more granularly, in case
 #       other properties in the http or logger sections are defined
 - name: Enable failed login logging from Home Assistant
