@@ -2,10 +2,6 @@ name: CD
 
 # Controls when the action will run.
 on:
-  # Triggers the workflow on push events but only for the main branch
-  push:
-    branches: [ main ]
-
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -52,11 +48,11 @@ jobs:
 
       - name: Bump version and push tag
         id: tag_version
-        uses: mathieudutour/github-tag-action@v5
+        uses: mathieudutour/github-tag-action@v6.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           release_branches: main
-          tag_prefix: ''
+          tag_prefix: ""
 
       - name: Create a GitHub release
         uses: actions/create-release@v1
@@ -70,5 +66,5 @@ jobs:
       - name: Deploy to Ansible Galaxy
         uses: artis3n/ansible_galaxy_collection@v2
         with:
-          api_key: '${{ secrets.galaxy_api_key }}'
-          galaxy_version: '${{ steps.tag_version.outputs.new_tag }}'
+          api_key: "${{ secrets.galaxy_api_key }}"
+          galaxy_version: "${{ steps.tag_version.outputs.new_tag }}"
