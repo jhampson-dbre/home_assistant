@@ -1,25 +1,18 @@
 ---
 arch:
   "i386":
-    hassio_docker: "{{ docker_repo }}/i386-hassio-supervisor"
     os_agent: "i386"
   "i686":
-    hassio_docker: "{{ docker_repo }}/i386-hassio-supervisor"
     os_agent: "none"
   "x86_64":
-    hassio_docker: "{{ docker_repo }}/amd64-hassio-supervisor"
     os_agent: "x86_64"
   "arm":
-    hassio_docker: "{{ docker_repo }}/armhf-hassio-supervisor"
     os_agent: "armv5"
   "armv6l":
-    hassio_docker: "{{ docker_repo }}/armhf-hassio-supervisor"
     os_agent: "none"
   "armv7l":
-    hassio_docker: "{{ docker_repo }}/armv7-hassio-supervisor"
     os_agent: "armv7"
   "aarch64":
-    hassio_docker: "{{ docker_repo }}/aarch64-hassio-supervisor"
     os_agent: "aarch64"
 
 # for geerlingguy.docker
