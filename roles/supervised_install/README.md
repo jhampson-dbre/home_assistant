@@ -1,7 +1,7 @@
 supervised_install
 =========
 
-Install Home Assistant Supervised on Raspberry Pi 4 running Debian 10 (buster).
+Install Home Assistant Supervised on Raspberry Pi 4 running Debian 11 (bullseye).
 
 Requirements
 ------------
@@ -66,7 +66,7 @@ Example Playbook
 ----------------
 
 ```yaml
-# Run the playbook from remote host to Rapsberry Pi 4 running Debian 10 64-bit
+# Run the playbook from remote host to Rapsberry Pi 4 running Debian 11 64-bit
 - hosts: pi
   become: yes
   force_handlers: true
@@ -75,7 +75,7 @@ Example Playbook
 ```
 
 ```yaml
-# Run the playbook locally in a Debian 10 VM with Ansible installed, running in Hyper-V on Windows
+# Run the playbook locally in a Debian 11 VM with Ansible installed, running in Hyper-V on Windows
 - hosts: localhost
   become: yes
   force_handlers: true

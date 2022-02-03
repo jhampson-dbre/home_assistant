@@ -1,12 +1,12 @@
 home_assistant.preinstall_config
 =========
 
-Prepare Rapsberry Pi 4 running Debian 10 for Home Assistant Supervised installation.
+Prepare Rapsberry Pi 4 running Debian 11 for Home Assistant Supervised installation.
 
 Requirements
 ------------
 
-This role is intended to run on Raspberry Pi 4 running Debian 10 installed using steps 1.1-1.3 of the [Installing Home Assistant Supervised on Raspberry Pi with Debian 10](https://community.home-assistant.io/t/installing-home-assistant-supervised-on-a-raspberry-pi-with-debian-10/247116) community guide.
+This role is intended to run on Raspberry Pi 4 running Debian 11 installed using steps 1.1-1.3 of the [Installing Home Assistant Supervised on a Raspberry Pi with Debian 11](https://community.home-assistant.io/t/installing-home-assistant-supervised-on-a-raspberry-pi-with-debian-11/247116) community guide.
 
 Since Ansible requires SSH to manage machines remotely, it is recommended to activate the root login by editing the sysconfig.txt file and uncomment the root password and the root_authorized_key. Then you should generate an SSH key pair and use the generated public key to paste there.
 

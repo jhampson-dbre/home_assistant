@@ -13,7 +13,7 @@ This role is based upon this documentation:
 Requirements
 ------------
 
-- Home Assistant Supervised installation running on Debian 10
+- Home Assistant Supervised installation running on Debian 11
 - NGINX Home Assistant SSL proxy add-on should be configured as reverse proxy for Home Assistant
 - This role must be ran as root, or as an alternate user with `become: true` set
 - Docker SDK for Python: `docker` Python package on the target server

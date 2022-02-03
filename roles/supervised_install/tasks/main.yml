@@ -12,12 +12,14 @@
 - name: Install OS package prereqs # noqa 403
   apt:
     name:
-      - systemd
-      - network-manager
-      - apparmor
       - jq
+      - wget
       - curl
+      - udisks2
+      - libglib2.0-bin
+      - network-manager
       - dbus
+      - apparmor-utils
     state: latest
     update_cache: yes
 

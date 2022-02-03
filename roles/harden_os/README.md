@@ -1,7 +1,7 @@
 harden_os
 =========
 
-Improve security of Debian 10 OS running Home Assistant Supervised on Raspberry Pi 4
+Improve security of Debian 11 OS running Home Assistant Supervised on Raspberry Pi 4
 
 This role can perform the following hardening:
 
