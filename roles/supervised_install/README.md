@@ -60,6 +60,7 @@ The variables below are used by the [geerlingguy.docker](https://github.com/geer
 ```yaml
 # vars/main.yml
 docker_apt_arch: arm64
+docker_install_compose: false
 ```
 
 Example Playbook
