@@ -11,7 +11,7 @@
     set -o pipefail
 
     echo unattended-upgrades unattended-upgrades/enable_auto_updates boolean true
-     | debconf-set-selections
+    | debconf-set-selections
 
     dpkg-reconfigure -f noninteractive unattended-upgrades
   args:
