@@ -1,6 +1,8 @@
 # Ansible Collection - jhampson_dbre.home_assistant
 
-A collection of roles for installing and configuring Home Assistant Supervised on Debian 11
+A collection of roles for installing and configuring Home Assistant Supervised on Debian 11.
+
+To see a real-world example of using this collection, check out the repo I use for [my Home Assistant setup](https://github.com/jhampson-dbre/my_home_assistant_setup) on GitHub.
 
 **WARNING:** The roles in this collection can make changes to Home Assisant's configuration.yaml and restart Home Assistant. As recommended before making any changes to Home Assisant, ensure you have a good snapshot of your current configuration.
 
