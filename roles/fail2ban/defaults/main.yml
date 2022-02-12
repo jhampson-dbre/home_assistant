@@ -4,3 +4,4 @@ fail2ban_jails:
   - hass-iptables
 
 max_failed_login_attempts: 5
+fail2ban_reverse_proxy_addon_name: addon_core_nginx_proxy
