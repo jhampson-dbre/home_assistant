@@ -1,6 +1,6 @@
 galaxy_info:
   author: Jared Hampson
-  description: Performs tasks to prepare Rapsberry Pi 4 running Debian 10 for Home Assistant installation.
+  description: Performs tasks to prepare Rapsberry Pi 4 running Debian 11 for Home Assistant installation.
 
   # If the issue tracker for your role is not on github, uncomment the
   # next line and provide a value
@@ -22,7 +22,7 @@ galaxy_info:
   platforms:
     - name: Debian
       versions:
-        - buster
+        - bullseye
 
   galaxy_tags:
     - home
