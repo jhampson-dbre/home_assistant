@@ -1,7 +1,7 @@
 ---
 - name: Get nginx container ip
   docker_container_info:
-    name: addon_core_nginx_proxy
+    name: "{{ fail2ban_reverse_proxy_addon_name }}"
   register: nginx_container_info
 
 - name: Ensure fail2ban.log exists

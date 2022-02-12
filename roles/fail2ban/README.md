@@ -14,7 +14,7 @@ Requirements
 ------------
 
 - Home Assistant Supervised installation running on Debian 11
-- NGINX Home Assistant SSL proxy add-on should be configured as reverse proxy for Home Assistant
+- An add-on should be configured as reverse proxy for Home Assistant, such as NGINX Home Assistant SSL proxy. If you are using another add-on, set the `fail2ban_reverse_proxy_addon_name` variable.
 - This role must be ran as root, or as an alternate user with `become: true` set
 - Docker SDK for Python: `docker` Python package on the target server
 - In Home Assistant's configuration.yaml, any pre-existing entries under `http` or `logger` headings will cause this role to fail. These settings are not defined in configuration.yaml by default, but if you have added any custom configuration under either of these headings, please remove it before running this role and then merge any custom configuration with the entries added by this role.
@@ -33,6 +33,15 @@ fail2ban_jails:
 # The number of failed log in attempts that will result in a ban
 # This number is used for all jails
 max_failed_login_attempts: 5
+
+# The name of the add-on used for reverse proxy server.
+#
+# The name can be found by getting the hostname from the
+# add-on's info page from the Supervisor panel and replacing
+# all `-` with `_`. For example 85d0901c_nginx_proxy_waf
+#
+# The default is the Nginx TLS/SSL Reverse Proxy core add-on
+fail2ban_reverse_proxy_addon_name: addon_core_nginx_proxy
 ```
 
 The following variables are set in `vars/main.yml`, with example values show. See `vars/main.yml` for the full values:
