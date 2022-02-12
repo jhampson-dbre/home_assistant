@@ -43,6 +43,7 @@
     - name: Check Home Assistant configuration
       shell: |
         ha core check
+      changed_when: false
   rescue:
     # NOTE: This does not work due to a bug that exists as of Ansible 2.9.16
     #       where blockinfile does not return backup location correctly.
