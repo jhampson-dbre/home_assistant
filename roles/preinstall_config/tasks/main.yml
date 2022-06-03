@@ -70,6 +70,8 @@
   become: no
   delegate_to: localhost
   run_once: true
+  register: result
+  ignore_errors: '"Could not find" in result.msg'
 
 - name: Create SSH key pair on the control machine to connect using home assistant user
   openssh_keypair:
