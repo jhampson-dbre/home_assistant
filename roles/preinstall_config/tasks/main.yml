@@ -38,7 +38,7 @@
   delegate_to: localhost
   run_once: true
 
-- name: Check if SSH keypair already exists
+- name: Check if controller SSH private key exists
   stat:
     path: "{{ lookup('env','HOME') + '/.ssh/id_rsa' }}"
   register: existing_ssh_key
@@ -46,7 +46,16 @@
   delegate_to: localhost
   run_once: true
 
-- name: Backup existing SSH keypair
+- name: Check if controller SSH public key available
+  stat:
+    path: "{{ lookup('env','HOME') + '/.ssh/id_rsa.pub' }}"
+  register: existing_ssh_pubkey
+  become: no
+  delegate_to: localhost
+  run_once: true
+  when: existing_ssh_key.stat.exists
+
+- name: Backup existing SSH keypair if we need new keys
   copy:
     src: "{{ key_file }}"
     dest: "{{ key_file + '.bak' }}"
@@ -57,7 +66,7 @@
     - "{{ lookup('env','HOME') + '/.ssh/id_rsa.pub' }}"
   loop_control:
     loop_var: key_file
-  when: existing_ssh_key.stat.exists
+  when: not existing_ssh_pubkey.stat.exists
   become: no
   delegate_to: localhost
   run_once: true
@@ -66,6 +75,7 @@
   openssh_keypair:
     path: "{{ lookup('env','HOME') + '/.ssh/id_rsa' }}"
     comment: "homeassistant"
+  when: not existing_ssh_pubkey.stat.exists
   become: no
   delegate_to: localhost
   run_once: true
