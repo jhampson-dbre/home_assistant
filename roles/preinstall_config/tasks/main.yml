@@ -53,31 +53,34 @@
   become: no
   delegate_to: localhost
   run_once: true
-  when: existing_ssh_key.stat.exists
 
-- name: Backup existing SSH keypair if we need new keys
+- name: Backup existing SSH private key if we need new keys
   copy:
-    src: "{{ key_file }}"
-    dest: "{{ key_file + '.bak' }}"
+    src: "{{ lookup('env','HOME') + '/.ssh/id_rsa' }}"
+    dest: "{{ lookup('env','HOME') + '/.ssh/id_rsa.bak' }}"
     backup: yes
     mode: '0600'
-  loop:
-    - "{{ lookup('env','HOME') + '/.ssh/id_rsa' }}"
-    - "{{ lookup('env','HOME') + '/.ssh/id_rsa.pub' }}"
-  loop_control:
-    loop_var: key_file
-  when: not existing_ssh_pubkey.stat.exists
+  when: existing_ssh_key.stat.exists and not existing_ssh_pubkey.stat.exists
   become: no
   delegate_to: localhost
   run_once: true
-  register: result
-  ignore_errors: '"Could not find" in result.msg'
+
+- name: Backup existing SSH pub key if we need new keys
+  copy:
+    src: "{{ lookup('env','HOME') + '/.ssh/id_rsa.pub' }}"
+    dest: "{{ lookup('env','HOME') + '/.ssh/id_rsa.pub.bak' }}"
+    backup: yes
+    mode: '0600'
+  when: not existing_ssh_key.stat.exists and existing_ssh_pubkey.stat.exists
+  become: no
+  delegate_to: localhost
+  run_once: true
 
 - name: Create SSH key pair on the control machine to connect using home assistant user
   openssh_keypair:
     path: "{{ lookup('env','HOME') + '/.ssh/id_rsa' }}"
     comment: "homeassistant"
-  when: not existing_ssh_pubkey.stat.exists
+  when: not existing_ssh_pubkey.stat.exists or not existing_ssh_key.stat.exists
   become: no
   delegate_to: localhost
   run_once: true
