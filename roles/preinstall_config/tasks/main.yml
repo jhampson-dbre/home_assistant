@@ -30,66 +30,9 @@
       - sudo
     append: yes
 
-- name: Ensure ssh directory exists for current user on the control machine
-  file:
-    path: "{{ lookup('env','HOME') + '/.ssh' }}"
-    mode: "0700"
-  become: no
-  delegate_to: localhost
-  run_once: true
-
-- name: Check if controller SSH private key exists
-  stat:
-    path: "{{ lookup('env','HOME') + '/.ssh/id_rsa' }}"
-  register: existing_ssh_key
-  become: no
-  delegate_to: localhost
-  run_once: true
-
-- name: Check if controller SSH public key available
-  stat:
-    path: "{{ lookup('env','HOME') + '/.ssh/id_rsa.pub' }}"
-  register: existing_ssh_pubkey
-  become: no
-  delegate_to: localhost
-  run_once: true
-
-- name: Backup existing SSH private key if we need new keys
-  copy:
-    src: "{{ lookup('env','HOME') + '/.ssh/id_rsa' }}"
-    dest: "{{ lookup('env','HOME') + '/.ssh/id_rsa.bak' }}"
-    backup: yes
-    mode: '0600'
-  when: existing_ssh_key.stat.exists and not existing_ssh_pubkey.stat.exists
-  become: no
-  delegate_to: localhost
-  run_once: true
-
-- name: Backup existing SSH pub key if we need new keys
-  copy:
-    src: "{{ lookup('env','HOME') + '/.ssh/id_rsa.pub' }}"
-    dest: "{{ lookup('env','HOME') + '/.ssh/id_rsa.pub.bak' }}"
-    backup: yes
-    mode: '0600'
-  when: not existing_ssh_key.stat.exists and existing_ssh_pubkey.stat.exists
-  become: no
-  delegate_to: localhost
-  run_once: true
-
-- name: Create SSH key pair on the control machine to connect using home assistant user
-  openssh_keypair:
-    path: "{{ lookup('env','HOME') + '/.ssh/id_rsa' }}"
-    comment: "homeassistant"
-  when: not existing_ssh_pubkey.stat.exists or not existing_ssh_key.stat.exists
-  become: no
-  delegate_to: localhost
-  run_once: true
-
-- name: Add public key to home assistant user authorized keys
-  authorized_key:
-    user: "{{ home_assistant_user }}"
-    state: present
-    key: "{{ lookup('file', lookup('env', 'HOME') + '/.ssh/id_rsa.pub') }}"
+- name: Import ssh key tasks
+  ansible.builtin.import_tasks: ssh_keys.yml
+  when: not preinstall_config_leave_my_keys_alone | bool
 
 - name: Enable passwordless sudo
   lineinfile:

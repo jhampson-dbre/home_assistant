@@ -35,6 +35,12 @@ home_assistant_user: homeassistant
 # When set to true, set the ipv4 address in /etc/hosts
 # When set to false, 127.0.1.1 will be set in /etc/hosts
 has_reserved_ip: false
+
+# Use this option when you want full control over creating SSH keys and
+# configuring them for uses with Ansible.
+# When set to true, the role will not attempt to create SSH keys
+# or add existing keys to home_assistant_user's authorized keys.
+preinstall_config_leave_my_keys_alone: false
 ```
 
 Dependencies

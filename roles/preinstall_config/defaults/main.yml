@@ -1,3 +1,4 @@
 ---
 home_assistant_user: homeassistant
 has_reserved_ip: false
+preinstall_config_leave_my_keys_alone: false
