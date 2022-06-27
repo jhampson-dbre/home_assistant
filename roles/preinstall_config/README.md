@@ -41,6 +41,13 @@ has_reserved_ip: false
 # When set to true, the role will not attempt to create SSH keys
 # or add existing keys to home_assistant_user's authorized keys.
 preinstall_config_leave_my_keys_alone: false
+
+# The name of the SSH key file. If you already have an existing key
+# named id_rsa and want to use a different key for using Ansible with Home Assistant,
+# you can specify an alternate key file name and then use `ansible_ssh_private_key_file`
+# host var, the `-k` ansible cli command line flag, or any other valid method to specify
+# a non-default ssh key file
+preinstall_config_ssk_key_name: id_rsa
 ```
 
 Dependencies

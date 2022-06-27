@@ -2,3 +2,4 @@
 home_assistant_user: homeassistant
 has_reserved_ip: false
 preinstall_config_leave_my_keys_alone: false
+preinstall_config_ssh_key_name: id_rsa
