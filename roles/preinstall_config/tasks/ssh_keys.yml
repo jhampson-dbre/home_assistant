@@ -14,28 +14,31 @@
   delegate_to: localhost
   run_once: true
   loop:
-    - "{{ lookup('env','HOME') + '/.ssh/id_rsa' }}"
-    - "{{ lookup('env','HOME') + '/.ssh/id_rsa.pub' }}"
+    - "{{ lookup('env','HOME') + '/.ssh/' + preinstall_config_ssh_key_name }}"
+    - "{{ lookup('env','HOME') + '/.ssh/' + preinstall_config_ssh_key_name + '.pub' }}"
   loop_control:
     loop_var: key_file
 
 - name: Backup existing SSH private key if we need new keys
   copy:
-    src: "{{ lookup('env','HOME') + '/.ssh/id_rsa' }}"
-    dest: "{{ lookup('env','HOME') + '/.ssh/id_rsa.bak' }}"
+    src: "{{ key_file.stat.path }}"
+    dest: "{{ key_file.stat.path + '.bak' }}"
     backup: yes
     mode: '0600'
   loop: "{{ existing_ssh_key.results }}"
   loop_control:
     loop_var: key_file
-  when: key_file.stat.exists|bool
+  when:
+    - key_file.stat.exists | bool
+    - (not existing_ssh_key.results[0].stat.exists | bool
+      or not existing_ssh_key.results[1].stat.exists | bool)
   become: no
   delegate_to: localhost
   run_once: true
 
 - name: Create SSH key pair on the control machine to connect using home assistant user
   openssh_keypair:
-    path: "{{ lookup('env','HOME') + '/.ssh/id_rsa' }}"
+    path: "{{ lookup('env','HOME') + '/.ssh/' + preinstall_config_ssh_key_name }}"
     comment: "homeassistant"
   when: >-
     not existing_ssh_key.results[0].stat.exists | bool
@@ -48,4 +51,4 @@
   authorized_key:
     user: "{{ home_assistant_user }}"
     state: present
-    key: "{{ lookup('file', lookup('env', 'HOME') + '/.ssh/id_rsa.pub') }}"
+    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/' + preinstall_config_ssh_key_name + '.pub') }}"
