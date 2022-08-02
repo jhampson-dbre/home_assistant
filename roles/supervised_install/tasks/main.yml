@@ -37,6 +37,22 @@
     state: present
     reload: yes
 
+- name: Ensure IPv6 is working
+  block:
+    - name: Check Home Assistant version IPv6 address
+      ansible.builtin.shell: |
+        ping -c 3 -6 version.home-assistant.io
+      check_mode: false
+      changed_when: false
+      args:
+        warn: false
+  rescue:
+    - name: Disable IPv6 to prevent Home Assistant install hang
+      ansible.builtin.lineinfile:
+        path: /etc/gai.conf
+        regex: 'precedence ::ffff:0:0/96  100'
+        line: 'precedence ::ffff:0:0/96  100'
+
 - name: Get download url for latest os-agent .deb release
   shell: |
     curl -s https://api.github.com/repos/home-assistant/os-agent/releases/latest \
@@ -53,6 +69,7 @@
 - name: Install os-agent
   apt:
     deb: "{{ os_agent_latest_url.stdout|trim }}"
+
 
 - name: Set machine type for homeassistant-supervised install
   debconf:
