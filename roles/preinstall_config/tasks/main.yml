@@ -5,6 +5,34 @@
     upgrade: full
   register: apt_out
 
+- name: Check for cmdline.txt
+  ansible.builtin.stat:
+    path: /boot/firmware/cmdline.txt
+  register: firmware_cmdline
+
+- name: Switch to cgroup v1
+  block:
+    - name: Create symlink for cmdline.txt
+      ansible.builtin.file:
+        src: /boot/firmware/cmdline.txt
+        dest: /boot/cmdline.txt
+        state: link
+
+    - name: Use cgroups v1 in cmdline.txt
+      ansible.builtin.shell: |
+        if ! grep -q "systemd.unified_cgroup_hierarchy=false" /boot/firmware/cmdline.txt; then
+          echo "Switching to cgroup v1"
+          cp /boot/firmware/cmdline.txt /boot/firmware/cmdline.txt.bak
+          sed -i 's/$/ systemd.unified_cgroup_hierarchy=false/' /boot/firmware/cmdline.txt
+          touch /var/run/reboot-required
+        fi
+      register: switch_to_cgroup_v1
+      changed_when: switch_to_cgroup_v1.stdout is search('Switching to cgroup v1')
+      args:
+        warn: false
+
+  when: firmware_cmdline.stat.exists | bool
+
 - name: Check if reboot required
   stat:
     path: /var/run/reboot-required
