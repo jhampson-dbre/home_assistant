@@ -25,9 +25,5 @@
     src: https://github.com/hacs/integration/releases/latest/download/hacs.zip
     dest: "{{ ha_path }}/custom_components/hacs"
     remote_src: yes
-
-- name: Restart Home Assistant
-  shell: |
-    ha core restart
-  args:
-    warn: no # noqa 301
+  notify:
+    - restart home assistant
