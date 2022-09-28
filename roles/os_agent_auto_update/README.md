@@ -15,8 +15,12 @@ Role Variables
 The following varaibles are defined in `defaults/main.yml`
 
 ```yaml
-# The path that the automatic update playbook will be copied to for scheduling
-os_agent_auto_update_playbook_dir: /home/homeassistant/playbooks
+# The directory that the automatic update playbook will be copied to for scheduling
+os_agent_auto_update_playbook_dir: /home/homeassistant/playbooks/
+
+# The directory that the `ansible-playbook` command is in
+# Default is for user pip install for root user
+os_agent_ansible_playbook_cmd_dir: /root/.local/bin/
 
 # Install ansible on the remote host so that the update playbook can run in cron. Set to false to you already have ansible installed, or need a specific Ansible version.
 os_agent_auto_update_install_ansible: true
