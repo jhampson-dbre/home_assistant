@@ -20,6 +20,7 @@
       - network-manager
       - dbus
       - apparmor-utils
+      - systemd-journal-remote
     state: latest
     update_cache: yes
 
