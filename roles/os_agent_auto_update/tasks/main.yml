@@ -24,4 +24,4 @@
     name: "update OS Agent"
     minute: "0"
     hour: "5"
-    job: "ansible-playbook {{ os_agent_auto_update_playbook_dir }}/update_os_agent.yml"
+    job: "{{ os_agent_ansible_playbook_cmd_dir }}ansible-playbook {{ os_agent_auto_update_playbook_dir }}update_os_agent.yml"
