@@ -59,6 +59,30 @@
         regex: 'precedence ::ffff:0:0/96  100'
         line: 'precedence ::ffff:0:0/96  100'
 
+- name: Configure DNS resolution
+  block:
+    - name: Create resolve.conf drop in directory
+      ansible.builtin.file:
+        path: /etc/systemd/resolve.conf.d
+        state: directory
+        mode: 0755
+
+    - name: Create resolve.conf override config
+      ansible.builtin.copy:
+        content: |
+          [Resolve]
+          {{ supervised_install_resolve_conf_overrides }}
+        dest: /etc/systemd/resolve.conf.d/resolve.conf
+        mode: 0644
+      register: resolve_conf_override_result
+
+    - name: Restart systemd-resolved
+      ansible.builtin.service:
+        name: systemd-resolved
+        state: restarted
+      when: resolve_conf_override_result is changed
+  when: supervised_install_resolve_conf_overrides is defined
+
 - name: Get download url for latest os-agent .deb release
   shell: |
     curl -s https://api.github.com/repos/home-assistant/os-agent/releases/latest \
