@@ -16,6 +16,17 @@ OS Packages:
 Role Variables
 --------------
 
+Optional variables with example configurations
+
+```yaml
+# Used to create overrides for resolve.conf to fix DNS resolution
+# If not set, then no resolve.conf overrides will be created
+# ref: https://github.com/home-assistant/supervised-installer/issues/339
+supervised_install_resolve_conf_overrides: |
+  DNS=192.168.68.1
+  DNSStubListener=no
+```
+
 Variables used from fact gathering
 
 - ansible_pkg_mgr: Used to validate that apt is available, since it is used by this role to install OS packages
