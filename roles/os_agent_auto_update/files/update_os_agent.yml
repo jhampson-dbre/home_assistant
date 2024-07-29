@@ -20,9 +20,7 @@
       register: os_agent_latest_url
       failed_when: os_agent_latest_url.stdout is not search('os-agent_.*_linux_.*.deb')
       changed_when: false
-      check_mode: no
-      args:
-        warn: false
+      check_mode: false
 
     - name: Install os-agent
       apt:
