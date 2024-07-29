@@ -6,13 +6,10 @@ Install Home Assistant Supervised on Raspberry Pi 4 running Debian 11 (bullseye)
 Requirements
 ------------
 
-Python Packages:
-
-- docker
-
 OS Packages:
 
 - python3-apt
+- python3-docker
 - debconf
 - debconf-utils
 
