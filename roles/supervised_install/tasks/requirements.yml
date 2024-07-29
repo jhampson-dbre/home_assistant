@@ -1,10 +1,11 @@
 ---
-- name: Install pip requirements for supervised_install
-  pip:
+- name: Install python package requirements for supervised_install
+  apt:
     name:
-      - docker
-    executable: pip3
-    extra_args: --user
+      - python3-docker
+    state: present
+    update_cache: yes
+  become: true
 
 - name: Install OS package requirements for supervised_install # noqa 403
   apt:

@@ -13,10 +13,12 @@
     mode: 0700
 
 - name: ensure ansible is installed
-  pip:
-    name: ansible<=2.10
-    extra_args: --user
-    executable: pip3
+  apt:
+    name:
+      - python3-ansible
+    state: present
+    update_cache: yes
+  become: true
   when: os_agent_auto_update_install_ansible|bool
 
 - name: schedule periodic update of OS Agent
