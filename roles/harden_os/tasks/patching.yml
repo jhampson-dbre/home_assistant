@@ -17,7 +17,6 @@
   args:
     creates: /etc/apt/apt.conf.d/20auto-upgrades
     executable: /bin/bash
-    warn: no
 
 - name: Configure unattended upgrades
   template:

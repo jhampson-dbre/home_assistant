@@ -28,8 +28,6 @@
         fi
       register: switch_to_cgroup_v1
       changed_when: switch_to_cgroup_v1.stdout is search('Switching to cgroup v1')
-      args:
-        warn: false
 
   when: firmware_cmdline.stat.exists | bool
 
