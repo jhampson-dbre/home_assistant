@@ -1,28 +1,47 @@
 ---
 # tasks file for os_agent_auto_update
 - name: create directory for auto update playbook
-  file:
+  ansible.builtin.file:
     path: "{{ os_agent_auto_update_playbook_dir }}"
     state: directory
     mode: 0700
 
 - name: copy OS Agent update playbook
-  copy:
+  ansible.builtin.copy:
     src: update_os_agent.yml
     dest: "{{ os_agent_auto_update_playbook_dir }}/update_os_agent.yml"
     mode: 0700
 
-- name: ensure ansible is installed
-  apt:
-    name:
-      - python3-ansible
+- name: add Ansible apt key
+  ansible.builtin.get_url:
+    url: "{{ os_agent_auto_update_ansible_apt_gpg_key }}"
+    dest: /etc/apt/keyrings/ansible.asc
+    mode: '0644'
+    force: false
+    checksum: "{{ os_agent_auto_update_ansible_apt_gpg_key_checksum | default(omit) }}"
+  register: add_repository_key
+  ignore_errors: "{{ os_agent_auto_update_ansible_apt_ignore_key_error }}"
+  when: os_agent_auto_update_install_ansible | bool
+
+- name: add Ansible repository
+  ansible.builtin.apt_repository:
+    repo: "{{ os_agent_auto_update_ansible_apt_repository }}"
     state: present
-    update_cache: yes
+    filename: "{{ os_agent_auto_update_ansible_apt_filename }}"
+    update_cache: true
+  when: os_agent_auto_update_install_ansible | bool
+
+- name: ensure ansible is installed
+  ansible.builtin.apt:
+    name:
+      - ansible
+    state: present
+    update_cache: true
   become: true
   when: os_agent_auto_update_install_ansible|bool
 
 - name: schedule periodic update of OS Agent
-  cron:
+  ansible.builtin.cron:
     name: "update OS Agent"
     minute: "0"
     hour: "5"

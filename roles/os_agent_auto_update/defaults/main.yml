@@ -3,3 +3,20 @@
 os_agent_auto_update_playbook_dir: /home/homeassistant/playbooks/
 os_agent_ansible_playbook_cmd_dir: /usr/bin/
 os_agent_auto_update_install_ansible: true
+
+# ansible apt repo URL
+os_agent_auto_update_ansible_repo_url: http://ppa.launchpad.net/ansible/ansible/ubuntu
+
+os_agent_auto_update_ansible_apt_release_channel: main
+# os_agent_auto_update_ansible_apt_distribution is a workaround for mapping the Debian variant to the
+# equivalent Ubuntu variant, which is what Ansible apt package uses for installation
+os_agent_auto_update_ansible_apt_distribution: jammy
+os_agent_auto_update_ansible_apt_repository: >-
+ deb [signed-by=/etc/apt/keyrings/ansible.asc]
+ {{ os_agent_auto_update_ansible_repo_url }}
+ {{ os_agent_auto_update_ansible_apt_distribution | lower }}
+ {{ os_agent_auto_update_ansible_apt_release_channel }}
+os_agent_auto_update_ansible_apt_gpg_key_checksum: "sha256:389ff6776f9d001238cf9ebc4a5e4c2210f497595ac9345f77110c8a2f2c0caf"
+os_agent_auto_update_ansible_apt_ignore_key_error: true
+os_agent_auto_update_ansible_apt_gpg_key: "https://keyserver.ubuntu.com/pks/lookup?fingerprint=on&op=get&search=0x6125E2A8C77F2818FB7BD15B93C4A3FD7BB9C367"
+os_agent_auto_update_ansible_apt_filename: "ansible"
