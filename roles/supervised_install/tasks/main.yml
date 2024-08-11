@@ -50,8 +50,6 @@
         ping -c 3 -6 version.home-assistant.io
       check_mode: false
       changed_when: false
-      args:
-        warn: false
   rescue:
     - name: Disable IPv6 to prevent Home Assistant install hang
       ansible.builtin.lineinfile:
@@ -83,7 +81,8 @@
       when: resolve_conf_override_result is changed
   when: supervised_install_resolve_conf_overrides is defined
 
-- name: Get download url for latest os-agent .deb release
+# use shell module so we can parse the output with shell commands
+- name: Get download url for latest os-agent .deb release # noqa: command-instead-of-module
   shell: |
     curl -s https://api.github.com/repos/home-assistant/os-agent/releases/latest \
     | grep "browser_download_url.*{{ arch[ansible_architecture]['os_agent'] }}.deb" \
@@ -92,9 +91,7 @@
   register: os_agent_latest_url
   failed_when: os_agent_latest_url.stdout is not search('os-agent_.*_linux_.*.deb')
   changed_when: false
-  check_mode: no
-  args:
-    warn: false
+  check_mode: false
 
 - name: Install os-agent
   apt:

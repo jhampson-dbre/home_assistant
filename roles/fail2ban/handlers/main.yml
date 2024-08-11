@@ -8,5 +8,3 @@
 - name: restart home assistant
   shell: |
     ha core restart
-  args:
-    warn: no
