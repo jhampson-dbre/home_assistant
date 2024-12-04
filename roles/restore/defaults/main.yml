@@ -1,0 +1,3 @@
+---
+# defaults file for restore
+restore_home_assistant_backup_dir: /usr/share/hassio/backup

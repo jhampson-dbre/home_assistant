@@ -1,0 +1,50 @@
+---
+- name: copy backup to home assistant server
+  copy:
+    src: "{{ restore_copy_source_dir }}/{{ restore_backup_file_name }}"
+    dest: "{{ restore_home_assistant_backup_dir }}/{{ restore_backup_file_name }}"
+  register: copy_backup_result
+  when: restore_copy_source_dir is defined
+
+- name: reload backups
+  command: |
+    ha backups reload
+  when: copy_backup_result is changed
+
+- name: list backups
+  command: |
+    ha backups list
+  register: restore_backups_list_out
+
+- name: get backups slug
+  set_fact:
+    backup_info: "{{ restore_backups_list_out_yaml.backups | selectattr('name', 'equalto', restore_backup_name) | list | first }}"
+  vars:
+    restore_backups_list_out_yaml: "{{ restore_backups_list_out.stdout | from_yaml }}"
+    restore_backup_name: "{{ restore_backup_file_name | split('.') | first | replace('_', ':') }}"
+
+- name: debug backup_info
+  debug:
+    var: backup_info
+    verbosity: 1
+
+- name: check backup slug found
+  assert:
+    that:
+      - backup_info.slug is defined
+    success_msg: "backup found with slug {{ backup_info.slug }}"
+    fail_msg: "unable to find slug. backup_info: {{ backup_info }}"
+
+- name: check password provided for protected backup
+  assert:
+    that:
+      - restore_backup_password is defined
+    fail_msg: "restore_backup_password must be set for password-protected backups"
+  when: backup_info.protected
+
+- name: restore backup (this can take more than 1 hour. be patient!)
+  command: >-
+    ha backups restore {{ backup_info.slug }}
+    {% if backup_info.protected %}
+     --password {{ restore_backup_password | quote }}
+    {% endif %}

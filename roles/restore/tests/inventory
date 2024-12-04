@@ -1,0 +1,9 @@
+all:
+  hosts:
+    rpi4:
+      ansible_host: 192.168.68.124
+      ansible_user: homeassistant
+      ansible_python_interpreter: /usr/bin/python3
+      restore_copy_source_dir: /mnt/c/Users/jhamp/Downloads
+      restore_backup_password: GNE4gAgthV56bwxnpqNe
+      restore_backup_file_name: Full Backup 2024-03-10 03_26_00.tar
